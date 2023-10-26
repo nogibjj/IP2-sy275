@@ -1,5 +1,7 @@
 use rusqlite::{Connection, NO_PARAMS, Result};
 use std::collections::HashMap;
+use rusqlite::OptionalExtension;
+
 
 #[derive(Debug)]
 pub struct Cat {
@@ -19,39 +21,62 @@ pub fn setup_db() -> Result<()> {
     )?;
     conn.execute(
         "create table if not exists cats (
-             id integer primary key,
-             name text not null,
-             color_id integer not null references cat_colors(id)
-         )",
+         id integer primary key,
+         name text not null unique,
+         color_id integer not null references cat_colors(id)
+     )",
         NO_PARAMS,
     )?;
 
     Ok(())
 }
 
-pub fn insert_cats() -> Result<()> {
+pub fn insert_cats(cat_colors: &HashMap<String, Vec<String>>) -> Result<()> {
     let conn = Connection::open("cats.db")?;
 
-    let mut cat_colors = HashMap::new();
-    cat_colors.insert(String::from("Blue"), vec!["Tigger", "Sammy"]);
-    cat_colors.insert(String::from("Black"), vec!["Oreo", "Biscuit"]);
+    for (color, catnames) in cat_colors {
+        let color_exists: Option<String> = conn.query_row(
+            "SELECT name FROM cat_colors WHERE name = ?1",
+            &[color],
+            |row| row.get(0),
+        ).optional()?;
 
-    for (color, catnames) in &cat_colors {
-        conn.execute(
-            "INSERT INTO cat_colors (name) values (?1)",
-            &[&color.to_string()],
-        )?;
-        let last_id: String = conn.last_insert_rowid().to_string();
+        let color_id: i64;
+        if color_exists.is_none() {
+            conn.execute(
+                "INSERT INTO cat_colors (name) values (?1)",
+                &[&color.to_string()],
+            )?;
+
+            color_id = conn.last_insert_rowid();
+        } else {
+            color_id = conn.query_row(
+                "SELECT id FROM cat_colors WHERE name = ?1",
+                &[color],
+                |row| row.get(0),
+            )?;
+        }
 
         for cat in catnames {
-            conn.execute(
-                "INSERT INTO cats (name, color_id) values (?1, ?2)",
-                &[&cat.to_string(), &last_id],
-            )?;
+            // Check if the cat exists
+            let cat_exists: Option<String> = conn.query_row(
+                "SELECT name FROM cats WHERE name = ?1",
+                &[cat],
+                |row| row.get(0),
+            ).optional()?;
+
+            if cat_exists.is_none() {
+                conn.execute(
+                    "INSERT INTO cats (name, color_id) values (?1, ?2)",
+                    &[&cat.to_string(), &color_id.to_string()],
+                )?;
+            }
         }
     }
     Ok(())
 }
+
+
 
 pub fn get_cats() -> Result<Vec<Cat>> {
     let conn = Connection::open("cats.db")?;
@@ -86,5 +111,16 @@ pub fn update_cat_name(conn: &Connection, old_name: &str, new_name: &str) -> Res
 
 pub fn delete_cat_by_name(conn: &Connection, cat_name: &str) -> Result<()> {
     conn.execute("DELETE FROM cats WHERE name = ?", &[&cat_name])?;
+    Ok(())
+}
+
+
+pub fn print_all_cats() -> Result<()> {
+    let cats = get_cats()?;
+    println!("----------------------");
+    for cat in cats {
+        println!("{:?} ", cat);
+    }
+    println!("----------------------");
     Ok(())
 }
