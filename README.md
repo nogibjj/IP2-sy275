@@ -1,4 +1,8 @@
 # Rust SQLite CLI
+[![Install](https://github.com/nogibjj/IP2-sy275/actions/workflows/lint.yml/badge.svg)](https://github.com/nogibjj/IP2-sy275/actions/workflows/lint.yml)
+[![Lint](https://github.com/nogibjj/IP2-sy275/actions/workflows/rustfmt.yml/badge.svg)](https://github.com/nogibjj/IP2-sy275/actions/workflows/rustfmt.yml)
+[![Format](https://github.com/nogibjj/IP2-sy275/actions/workflows/release.yml/badge.svg)](https://github.com/nogibjj/IP2-sy275/actions/workflows/release.yml)
+[![Test](https://github.com/nogibjj/IP2-sy275/actions/workflows/tests.yml/badge.svg)](https://github.com/nogibjj/IP2-sy275/actions/workflows/tests.yml)
 
 A simple Rust program demonstrating CRUD operations with an SQLite database.
 
