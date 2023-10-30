@@ -7,6 +7,12 @@
 
 A simple Rust program demonstrating CRUD operations with an SQLite database.
 
+## YouTube Video
+
+[Link to Youtube](https://youtu.be/IzOHWxj_oSc)
+
+[![Watch the video](https://img.youtube.com/vi/nTQUwghvy5Q/default.jpg)](https://youtu.be/IzOHWxj_oSc)
+
 ## Rust Source Code Syntax and Unique Features
 
 My codes demonstrate several unique features and idioms of Rust:
@@ -79,7 +85,7 @@ List - To list all cats:
 
 `cargo test`
 
-![img_2.png](img_2.png)
+![img_2.png](img/img_2.png)
 
 
 ## Use of GitHub Copilot
@@ -95,16 +101,14 @@ If I accept the suggestion, the code will be generated automatically by press `t
 
 The below image indicates this process, as you can see, the prompt is shown after the cursor.
 
-![img.png](img.png)
+![img.png](img/img.png)
 
 After I press `tab`, the code will be generated automatically as below:
 
-![img_1.png](img_1.png)
+![img_1.png](img/img_1.png)
 
 Furthermore, the rest code will be generated accordingly if needed.
 
-
-## YouTube Link
 
 
 ## References
