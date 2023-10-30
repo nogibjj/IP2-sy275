@@ -1,37 +1,52 @@
-// tests/test.rs
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap; // Importing the HashMap type
+    use rusqlite::Connection; // Importing the Connection type
+    use ip2_sy275::{setup_db, insert_animals, get_animals, update_animal_name, delete_animal_by_name}; // Importing the functions from lib.rs
 
-use ip2_sy275::{
-    get_cats, update_cat_name, delete_cat_by_name
-};
-use rusqlite::Connection;
+    #[test]
+    fn test_setup_db() {
+        let res = setup_db();
+        assert!(res.is_ok(), "Failed to set up the database");
+    }
 
+    #[test]
+    fn test_insert_animals() {
+        let mut animals = HashMap::new();
+        animals.insert(String::from("Whiskers"), String::from("Gray"));
+        let res = insert_animals(&animals);
+        assert!(res.is_ok(), "Failed to insert animals into the database");
+    }
 
-#[test]
-fn test_update_cat_name() -> rusqlite::Result<()> {
-    let conn = Connection::open("cats.db")?;
+    #[test]
+    fn test_get_animals() {
+        let animals = get_animals();
+        assert!(animals.is_ok(), "Failed to get animals from the database");
+    }
 
-    // Update a cat's name
-    update_cat_name(&conn, "Tigger", "TiggerTest")?;
+    #[test]
+    fn test_update_animal_name() {
+        let conn = Connection::open("animals.db").unwrap();
+        // insert first to make sure test successful
+        let mut animals = HashMap::new();
+        animals.insert(String::from("Whiskers"), String::from("Gray"));
+        let res = insert_animals(&animals);
+        assert!(res.is_ok(), "Failed to insert animals into the database");
 
-    // Ensure name was updated
-    let cats = get_cats()?;
-    let updated_cat = cats.iter().find(|&cat| cat.name == "TiggerTest").unwrap();
-    assert_eq!(updated_cat.name, "TiggerTest");
+        let res = update_animal_name(&conn, "Whiskers", "WhiskersUpdated");
+        assert!(res.is_ok(), "Failed to update animal name");
 
-    Ok(())
-}
+        let updated_animals = get_animals().unwrap();
+        assert!(updated_animals.iter().any(|animal| animal.name == "WhiskersUpdated"), "Updated name not found in the database");
+    }
 
-#[test]
-fn test_delete_cat_by_name() -> rusqlite::Result<()> {
-    let conn = Connection::open("cats.db")?;
+    #[test]
+    fn test_delete_animal_by_name() {
+        let conn = Connection::open("animals.db").unwrap();
+        let res = delete_animal_by_name(&conn, "WhiskersUpdated");
+        assert!(res.is_ok(), "Failed to delete animal by name");
 
-    // Delete a cat by name
-    delete_cat_by_name(&conn, "Biscuit")?;
-
-    // Ensure cat was deleted
-    let cats = get_cats()?;
-    let deleted_cat = cats.iter().find(|&cat| cat.name == "Biscuit");
-    assert!(deleted_cat.is_none());
-
-    Ok(())
+        let updated_animals = get_animals().unwrap();
+        assert!(!updated_animals.iter().any(|animal| animal.name == "WhiskersUpdated"), "Deleted animal was found in the database");
+    }
 }

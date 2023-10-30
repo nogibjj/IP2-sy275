@@ -1,35 +1,54 @@
+use std::env;
 use rusqlite::Connection;
-// <-- Add this import
-use ip2_sy275::{setup_db, insert_cats, update_cat_name, delete_cat_by_name, print_all_cats};
 use rusqlite::Result;
 use std::collections::HashMap;
-
+use ip2_sy275::{setup_db, insert_animals, update_animal_name, delete_animal_by_name, print_all_animals};
 
 fn main() -> Result<()> {
-    // Setup the database and tables
     setup_db()?;
 
-    // Insert cats into the database
-    let mut cat_colors = HashMap::new();
-    cat_colors.insert(String::from("Blue"), vec![String::from("Tigger"), String::from("Sammy")]);
-    cat_colors.insert(String::from("Black"), vec![String::from("Oreo"), String::from("Biscuit")]);
+    let args: Vec<String> = env::args().collect();
 
-    insert_cats(&cat_colors).unwrap();
+    if args.len() < 2 {
+        println!("Please specify a command: insert, update, delete, or list");
+        return Ok(());
+    }
 
-    // Initial state of the database
-    println!("Initial state of the database:");
-    print_all_cats()?;
+    let command = &args[1].to_lowercase();
 
-    // Demonstrate update
-    let conn = Connection::open("cats.db")?;
-    update_cat_name(&conn, "Tigger", "TiggerUpdated")?;
-    println!("After updating Tigger's name:");
-    print_all_cats()?;
-
-    // Demonstrate delete
-    delete_cat_by_name(&conn, "Oreo")?;
-    println!("After deleting Oreo:");
-    print_all_cats()?;
+    match command.as_str() {
+        "insert" => {
+            if args.len() != 4 {
+                println!("Usage: insert <animal_name> <color>");
+                return Ok(());
+            }
+            let mut animals = HashMap::new();
+            animals.insert(args[2].clone(), args[3].clone());
+            insert_animals(&animals)?;
+        },
+        "update" => {
+            if args.len() != 4 {
+                println!("Usage: update <old_name> <new_name>");
+                return Ok(());
+            }
+            let conn = Connection::open("animals.db")?;
+            update_animal_name(&conn, &args[2], &args[3])?;
+        },
+        "delete" => {
+            if args.len() != 3 {
+                println!("Usage: delete <animal_name>");
+                return Ok(());
+            }
+            let conn = Connection::open("animals.db")?;
+            delete_animal_by_name(&conn, &args[2])?;
+        },
+        "list" => {
+            print_all_animals()?;
+        },
+        _ => {
+            println!("Invalid command. Use: insert, update, delete, or list");
+        },
+    }
 
     Ok(())
 }
