@@ -16,4 +16,10 @@ jobs:
           override: true
       - name: Run clippy
         run: make release
+      - name: Generate Optimized Binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: optimized-binary
+          path: target/release/optimized-binary
+
   
