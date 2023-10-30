@@ -9,9 +9,9 @@ A simple Rust program demonstrating CRUD operations with an SQLite database.
 
 ## YouTube Video
 
-[Link to Youtube](https://youtu.be/IzOHWxj_oSc)
+Click the image below to watch the video:
 
-[![Watch the video](https://img.youtube.com/vi/nTQUwghvy5Q/default.jpg)](https://youtu.be/IzOHWxj_oSc)
+[![Watch the video](http://i3.ytimg.com/vi/IzOHWxj_oSc/hqdefault.jpg)](https://youtu.be/IzOHWxj_oSc)
 
 ## Rust Source Code Syntax and Unique Features
 
