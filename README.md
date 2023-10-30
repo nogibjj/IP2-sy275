@@ -111,7 +111,7 @@ Furthermore, the rest code will be generated accordingly if needed.
 
 ## Optimized Rust Binary
 
-The `release` mode is used to optimize the binary.
+The `release` mode is used to optimize the binary. You could find it at the latest github action.
 
 ![img_3.png](img/img3.png)
 
