@@ -109,7 +109,11 @@ After I press `tab`, the code will be generated automatically as below:
 
 Furthermore, the rest code will be generated accordingly if needed.
 
+## Optimized Rust Binary
 
+The `release` mode is used to optimize the binary.
+
+![img_3.png](img/img3.png)
 
 ## References
 
